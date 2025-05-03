@@ -4,7 +4,6 @@ import '../models/app_model.dart';
 import '../providers/app_provider.dart';
 import '../widgets/custom_home_view.dart';
 import '../widgets/search_bar_widget.dart';
-import '../widgets/clock_widget.dart';
 import '../widgets/settings_page.dart';
 
 class CustomHomeScreen extends StatefulWidget {
@@ -41,52 +40,40 @@ class _CustomHomeScreenState extends State<CustomHomeScreen>
   @override
   Widget build(BuildContext context) {
     // Use a minimal structure to avoid interfering with the Android wallpaper theme
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Draggable icons area
-          const CustomHomeView(),
+    return WillPopScope(
+      // Prevent back button from closing the launcher
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Draggable icons area
+            const CustomHomeView(),
 
-          // Top section with clock
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              height: 120,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black.withOpacity(0.4), Colors.transparent],
-                ),
+            // Removed clock widget section
+
+            // Search bar at the bottom
+            const Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
+                child: SearchBarWidget(),
               ),
-              alignment: Alignment.center,
-              child: const SafeArea(child: ClockWidget()),
             ),
-          ),
-
-          // Search bar at the bottom
-          const Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
-              child: SearchBarWidget(),
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'App Drawer',
-        onPressed: () {
-          // Navigate to app grid when tapped
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AppDrawerScreen()),
-          );
-        },
-        child: const Icon(Icons.apps),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'App Drawer',
+          onPressed: () {
+            // Navigate to app grid when tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AppDrawerScreen()),
+            );
+          },
+          child: const Icon(Icons.apps),
+        ),
       ),
     );
   }

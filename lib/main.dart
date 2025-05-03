@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/widget_provider.dart';
 import 'screens/custom_home_screen.dart';
 
 void main() async {
@@ -14,7 +15,11 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // No longer need to request wallpaper permissions since we're using transparent theme
+  // Hide status bar for immersive experience
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+    overlays: [], // Empty list means no system overlays are visible
+  );
 
   runApp(const MainApp());
 }
@@ -28,6 +33,7 @@ class MainApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AppProvider()),
+        ChangeNotifierProvider(create: (_) => WidgetProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
