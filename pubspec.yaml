@@ -1,7 +1,11 @@
-name: home_launcher
-description: "A new Flutter project."
+name: luno_launcher
+description: "A minimalist launcher for Android."
 publish_to: 'none'
 version: 0.1.0
+
+# Specify supported platforms - Android only
+platforms:
+  android: # Only allow Android platform
 
 environment:
   sdk: ^3.7.2

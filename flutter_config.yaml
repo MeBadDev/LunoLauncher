@@ -1,0 +1,8 @@
+# Flutter configuration file
+# This file controls which platforms are enabled for this project
+enable-web: false
+enable-macos: false
+enable-windows: false
+enable-linux: false
+enable-ios: false
+enable-android: true
