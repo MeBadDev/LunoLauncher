@@ -1,4 +1,4 @@
-package com.lunolauncher.app
+package net.mebaddev.lunolauncher
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine

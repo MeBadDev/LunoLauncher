@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import '../providers/theme_provider.dart';
 import '../providers/app_provider.dart';
 
@@ -10,7 +9,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final appProvider = Provider.of<AppProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings'), elevation: 0),
@@ -26,13 +24,12 @@ class SettingsPage extends StatelessWidget {
           ),
           ListTile(
             title: const Text('Wallpaper'),
-            subtitle: Text(
-              appProvider.wallpaperPath != null
-                  ? 'Custom wallpaper selected'
-                  : 'Default gradient background',
+            subtitle: const Text(
+              'Using system wallpaper from your device settings',
             ),
             leading: const Icon(Icons.wallpaper),
-            onTap: () => _showWallpaperOptions(context, appProvider),
+            trailing: const Icon(Icons.info_outline, size: 20),
+            onTap: () => _showWallpaperInfo(context),
           ),
           const Divider(),
 
@@ -176,59 +173,31 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  void _showWallpaperOptions(BuildContext context, AppProvider appProvider) {
-    showModalBottomSheet(
+  void _showWallpaperInfo(BuildContext context) {
+    showDialog(
       context: context,
       builder:
-          (context) => Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.add_photo_alternate),
-                title: const Text('Choose from gallery'),
-                onTap: () async {
-                  Navigator.pop(context);
-
-                  try {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? image = await picker.pickImage(
-                      source: ImageSource.gallery,
-                      maxWidth: 1920,
-                    );
-
-                    if (image != null) {
-                      appProvider.setWallpaperPath(image.path);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Wallpaper updated')),
-                        );
-                      }
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error selecting image: $e')),
-                      );
-                    }
-                  }
-                },
-              ),
-              if (appProvider.wallpaperPath != null)
-                ListTile(
-                  leading: const Icon(Icons.delete_outline),
-                  title: const Text('Remove wallpaper'),
-                  onTap: () {
-                    appProvider.setWallpaperPath(null);
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Wallpaper removed')),
-                    );
-                  },
+          (context) => AlertDialog(
+            title: const Text('System Wallpaper'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'This home launcher uses your device\'s system wallpaper.',
+                  style: TextStyle(fontSize: 16),
                 ),
-              ListTile(
-                leading: const Icon(Icons.close),
-                title: const Text('Cancel'),
-                onTap: () => Navigator.pop(context),
+                SizedBox(height: 16),
+                Text(
+                  'To change the wallpaper, use your device\'s built-in wallpaper settings or Gallery/Photos app.',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
               ),
             ],
           ),

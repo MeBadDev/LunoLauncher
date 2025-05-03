@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/app_model.dart';
+import '../services/wallpaper_service.dart';
 
 class AppProvider with ChangeNotifier {
   List<AppModel> _apps = [];
   List<AppModel> _filteredApps = [];
   String _searchQuery = '';
-  String? _wallpaperPath;
+  ImageProvider? _systemWallpaper;
   final List<String> _categories = [
     'Favorites',
     'Social',
@@ -22,11 +23,11 @@ class AppProvider with ChangeNotifier {
   String get searchQuery => _searchQuery;
   List<String> get categories => _categories;
   String get currentCategory => _currentCategory;
-  String? get wallpaperPath => _wallpaperPath;
+  ImageProvider? get systemWallpaper => _systemWallpaper;
 
   AppProvider() {
     loadApps();
-    _loadWallpaperPath();
+    _loadSystemWallpaper();
   }
 
   Future<void> loadApps() async {
@@ -37,21 +38,18 @@ class AppProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadWallpaperPath() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    _wallpaperPath = prefs.getString('wallpaper_path');
-    notifyListeners();
+  Future<void> _loadSystemWallpaper() async {
+    try {
+      _systemWallpaper = await WallpaperService.getSystemWallpaper();
+      notifyListeners();
+    } catch (e) {
+      print('Error loading system wallpaper: $e');
+    }
   }
 
-  Future<void> setWallpaperPath(String? path) async {
-    _wallpaperPath = path;
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (path != null) {
-      await prefs.setString('wallpaper_path', path);
-    } else {
-      await prefs.remove('wallpaper_path');
-    }
-    notifyListeners();
+  // Refresh wallpaper - can be called when returning to the app
+  Future<void> refreshWallpaper() async {
+    await _loadSystemWallpaper();
   }
 
   Future<void> _loadFavorites() async {

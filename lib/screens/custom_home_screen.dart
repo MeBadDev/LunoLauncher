@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 import '../models/app_model.dart';
 import '../providers/app_provider.dart';
 import '../widgets/custom_home_view.dart';
@@ -15,17 +14,40 @@ class CustomHomeScreen extends StatefulWidget {
   State<CustomHomeScreen> createState() => _CustomHomeScreenState();
 }
 
-class _CustomHomeScreenState extends State<CustomHomeScreen> {
+class _CustomHomeScreenState extends State<CustomHomeScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    // Add lifecycle observer to update wallpaper when app resumes
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // Remove lifecycle observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // When app resumes, refresh the wallpaper in case it changed
+    if (state == AppLifecycleState.resumed) {
+      final appProvider = Provider.of<AppProvider>(context, listen: false);
+      appProvider.refreshWallpaper();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
 
     return Scaffold(
-      // Use transparent scaffold to allow wallpaper or gradient to show through
       backgroundColor: Colors.transparent,
-      // Container with wallpaper or gradient background
       body: Container(
-        decoration: _buildBackgroundDecoration(appProvider.wallpaperPath),
+        decoration: _buildBackgroundDecoration(appProvider),
         child: SafeArea(
           child: Stack(
             children: [
@@ -81,27 +103,26 @@ class _CustomHomeScreenState extends State<CustomHomeScreen> {
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration(String? wallpaperPath) {
-    // If we have a wallpaper image, use it
-    if (wallpaperPath != null) {
-      final file = File(wallpaperPath);
-      if (file.existsSync()) {
-        return BoxDecoration(
-          image: DecorationImage(
-            image: FileImage(file),
-            fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(
-              Colors.black.withAlpha(
-                51,
-              ), // 0.2 opacity converted to alpha value
-              BlendMode.darken,
-            ),
+  BoxDecoration _buildBackgroundDecoration(AppProvider appProvider) {
+    // If we have a system wallpaper, use it
+    if (appProvider.systemWallpaper != null) {
+      print('Using system wallpaper for background');
+      return BoxDecoration(
+        image: DecorationImage(
+          image: appProvider.systemWallpaper!,
+          fit: BoxFit.cover,
+          colorFilter: ColorFilter.mode(
+            Colors.black.withAlpha(51), // 0.2 opacity converted to alpha value
+            BlendMode.darken,
           ),
-        );
-      }
+        ),
+      );
     }
 
     // Otherwise fall back to a gradient
+    print(
+      'System wallpaper not available, falling back to gradient background',
+    );
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
