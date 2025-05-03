@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_provider.dart';
 import 'providers/theme_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/custom_home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,7 +35,7 @@ class MainApp extends StatelessWidget {
             darkTheme: themeProvider.getDarkTheme(),
             themeMode: themeProvider.themeMode,
             debugShowCheckedModeBanner: false,
-            home: const HomeScreen(),
+            home: const CustomHomeScreen(),
           );
         },
       ),

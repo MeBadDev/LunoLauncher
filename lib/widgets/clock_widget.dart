@@ -34,7 +34,9 @@ class ClockWidgetState extends State<ClockWidget> {
   void _updateTime() {
     final DateTime now = DateTime.now();
     final String formattedTime = DateFormat('HH:mm').format(now);
-    final String formattedDate = DateFormat('EEEE, MMMM d, y').format(now);
+
+    // Use a shorter date format to prevent overflow
+    final String formattedDate = DateFormat('EEE, MMM d').format(now);
 
     setState(() {
       _timeString = formattedTime;
@@ -44,24 +46,47 @@ class ClockWidgetState extends State<ClockWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          _timeString,
-          style: Theme.of(context).textTheme.displayLarge?.copyWith(
-            fontWeight: FontWeight.w300,
-            letterSpacing: 2.0,
-          ),
+    // Get the available width
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Adjust text size based on screen width
+    final timeTextSize = screenWidth * 0.15; // 15% of screen width
+    final dateTextSize = screenWidth * 0.04; // 4% of screen width
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Container(
+        width: screenWidth * 0.9, // 90% of screen width
+        constraints: BoxConstraints(
+          maxWidth: screenWidth - 32, // Account for padding
         ),
-        const SizedBox(height: 8),
-        Text(
-          _dateString,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w300),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              _timeString,
+              style: TextStyle(
+                fontSize: timeTextSize,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 2.0,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _dateString,
+              style: TextStyle(
+                fontSize: dateTextSize,
+                fontWeight: FontWeight.w300,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

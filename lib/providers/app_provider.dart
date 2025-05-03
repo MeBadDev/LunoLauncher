@@ -6,6 +6,7 @@ class AppProvider with ChangeNotifier {
   List<AppModel> _apps = [];
   List<AppModel> _filteredApps = [];
   String _searchQuery = '';
+  String? _wallpaperPath;
   final List<String> _categories = [
     'Favorites',
     'Social',
@@ -21,9 +22,11 @@ class AppProvider with ChangeNotifier {
   String get searchQuery => _searchQuery;
   List<String> get categories => _categories;
   String get currentCategory => _currentCategory;
+  String? get wallpaperPath => _wallpaperPath;
 
   AppProvider() {
     loadApps();
+    _loadWallpaperPath();
   }
 
   Future<void> loadApps() async {
@@ -31,6 +34,23 @@ class AppProvider with ChangeNotifier {
     _loadFavorites();
     _loadCategories();
     _filterApps();
+    notifyListeners();
+  }
+
+  Future<void> _loadWallpaperPath() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _wallpaperPath = prefs.getString('wallpaper_path');
+    notifyListeners();
+  }
+
+  Future<void> setWallpaperPath(String? path) async {
+    _wallpaperPath = path;
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (path != null) {
+      await prefs.setString('wallpaper_path', path);
+    } else {
+      await prefs.remove('wallpaper_path');
+    }
     notifyListeners();
   }
 
