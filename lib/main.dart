@@ -30,7 +30,7 @@ class MainApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {
           return MaterialApp(
-            title: 'Elegant Home Launcher',
+            title: 'LunoLauncher',
             theme: themeProvider.getLightTheme(),
             darkTheme: themeProvider.getDarkTheme(),
             themeMode: themeProvider.themeMode,

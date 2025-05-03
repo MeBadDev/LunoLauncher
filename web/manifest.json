@@ -1,11 +1,11 @@
 {
-    "name": "home_launcher",
-    "short_name": "home_launcher",
+    "name": "LunoLauncher",
+    "short_name": "LunoLauncher",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "A minimalist launcher for Android.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

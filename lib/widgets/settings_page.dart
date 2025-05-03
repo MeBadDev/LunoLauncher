@@ -58,7 +58,7 @@ class SettingsPage extends StatelessWidget {
           const Divider(),
           const ListTile(
             title: Text('About'),
-            subtitle: Text('Elegant Home Launcher v0.1.0'),
+            subtitle: Text('LunoLauncher v0.1.0'),
             leading: Icon(Icons.info_outline),
           ),
         ],
