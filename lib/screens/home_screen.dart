@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../widgets/app_grid.dart';
 import '../widgets/category_selector.dart';
 import '../widgets/clock_widget.dart';
-import '../widgets/search_bar_widget.dart';
 import '../widgets/settings_page.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,8 +21,7 @@ class HomeScreen extends StatelessWidget {
               child: const ClockWidget(),
             ),
 
-            // Search bar
-            const SearchBarWidget(),
+            // Removed search bar
 
             // Category selector
             const CategorySelector(),
