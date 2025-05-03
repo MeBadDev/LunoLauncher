@@ -50,12 +50,14 @@ class WallpaperPlugin: FlutterPlugin, MethodCallHandler {
       // Get the wallpaper as a drawable
       val wallpaperDrawable = wallpaperManager.drawable
       
-      // Convert drawable to bitmap
-      val bitmap = drawableToBitmap(wallpaperDrawable)
-      if (bitmap != null) {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-        return stream.toByteArray()
+      // Convert drawable to bitmap if not null
+      if (wallpaperDrawable != null) {
+        val bitmap = drawableToBitmap(wallpaperDrawable)
+        if (bitmap != null) {
+          val stream = ByteArrayOutputStream()
+          bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+          return stream.toByteArray()
+        }
       }
     } catch (e: Exception) {
       e.printStackTrace()
@@ -63,7 +65,9 @@ class WallpaperPlugin: FlutterPlugin, MethodCallHandler {
     return null
   }
   
-  private fun drawableToBitmap(drawable: Drawable): Bitmap? {
+  private fun drawableToBitmap(drawable: Drawable?): Bitmap? {
+    if (drawable == null) return null
+    
     try {
       // Create a bitmap with the same dimensions as the drawable
       val bitmap = Bitmap.createBitmap(
