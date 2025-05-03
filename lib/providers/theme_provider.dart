@@ -63,6 +63,12 @@ class ThemeProvider with ChangeNotifier {
       colorScheme: ColorScheme.light(primary: _accentColor),
       fontFamily: GoogleFonts.poppins().fontFamily,
       useMaterial3: true,
+      scaffoldBackgroundColor: Colors.transparent,
+      // Set app bar and background to be transparent
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
     );
   }
 
@@ -73,6 +79,12 @@ class ThemeProvider with ChangeNotifier {
       colorScheme: ColorScheme.dark(primary: _accentColor),
       fontFamily: GoogleFonts.poppins().fontFamily,
       useMaterial3: true,
+      scaffoldBackgroundColor: Colors.transparent,
+      // Set app bar and background to be transparent
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
     );
   }
 }

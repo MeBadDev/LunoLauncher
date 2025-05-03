@@ -5,7 +5,7 @@ import 'providers/app_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/custom_home_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Set preferred orientations
@@ -13,6 +13,8 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  // No longer need to request wallpaper permissions since we're using transparent theme
 
   runApp(const MainApp());
 }

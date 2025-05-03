@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/app_model.dart';
-import '../services/wallpaper_service.dart';
 
 class AppProvider with ChangeNotifier {
   List<AppModel> _apps = [];
   List<AppModel> _filteredApps = [];
   String _searchQuery = '';
-  ImageProvider? _systemWallpaper;
   final List<String> _categories = [
     'Favorites',
     'Social',
@@ -23,11 +21,9 @@ class AppProvider with ChangeNotifier {
   String get searchQuery => _searchQuery;
   List<String> get categories => _categories;
   String get currentCategory => _currentCategory;
-  ImageProvider? get systemWallpaper => _systemWallpaper;
 
   AppProvider() {
     loadApps();
-    _loadSystemWallpaper();
   }
 
   Future<void> loadApps() async {
@@ -36,20 +32,6 @@ class AppProvider with ChangeNotifier {
     _loadCategories();
     _filterApps();
     notifyListeners();
-  }
-
-  Future<void> _loadSystemWallpaper() async {
-    try {
-      _systemWallpaper = await WallpaperService.getSystemWallpaper();
-      notifyListeners();
-    } catch (e) {
-      print('Error loading system wallpaper: $e');
-    }
-  }
-
-  // Refresh wallpaper - can be called when returning to the app
-  Future<void> refreshWallpaper() async {
-    await _loadSystemWallpaper();
   }
 
   Future<void> _loadFavorites() async {

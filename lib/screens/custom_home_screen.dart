@@ -19,75 +19,63 @@ class _CustomHomeScreenState extends State<CustomHomeScreen>
   @override
   void initState() {
     super.initState();
-    // Add lifecycle observer to update wallpaper when app resumes
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    // Remove lifecycle observer
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // When app resumes, refresh the wallpaper in case it changed
     if (state == AppLifecycleState.resumed) {
+      // Refresh app list when resuming the app
       final appProvider = Provider.of<AppProvider>(context, listen: false);
-      appProvider.refreshWallpaper();
+      appProvider.loadApps();
     }
     super.didChangeAppLifecycleState(state);
   }
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
-
+    // Use a minimal structure to avoid interfering with the Android wallpaper theme
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: _buildBackgroundDecoration(appProvider),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              // Draggable icons area - covers the whole screen
-              const Positioned.fill(child: CustomHomeView()),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Draggable icons area
+          const CustomHomeView(),
 
-              // Top section with clock
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 120,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    // Subtle gradient for better text visibility
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.4),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                  alignment: Alignment.center,
-                  child: const ClockWidget(),
+          // Top section with clock
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              height: 120,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black.withOpacity(0.4), Colors.transparent],
                 ),
               ),
-
-              // Search bar at the bottom
-              const Positioned(
-                bottom: 16,
-                left: 16,
-                right: 16,
-                child: SearchBarWidget(),
-              ),
-            ],
+              alignment: Alignment.center,
+              child: const SafeArea(child: ClockWidget()),
+            ),
           ),
-        ),
+
+          // Search bar at the bottom
+          const Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 16.0, left: 16.0, right: 16.0),
+              child: SearchBarWidget(),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'App Drawer',
@@ -99,35 +87,6 @@ class _CustomHomeScreenState extends State<CustomHomeScreen>
           );
         },
         child: const Icon(Icons.apps),
-      ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration(AppProvider appProvider) {
-    // If we have a system wallpaper, use it
-    if (appProvider.systemWallpaper != null) {
-      print('Using system wallpaper for background');
-      return BoxDecoration(
-        image: DecorationImage(
-          image: appProvider.systemWallpaper!,
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withAlpha(51), // 0.2 opacity converted to alpha value
-            BlendMode.darken,
-          ),
-        ),
-      );
-    }
-
-    // Otherwise fall back to a gradient
-    print(
-      'System wallpaper not available, falling back to gradient background',
-    );
-    return BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [Colors.blue.shade800, Colors.purple.shade900],
       ),
     );
   }
